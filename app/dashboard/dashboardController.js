@@ -13,7 +13,7 @@
         vm.credit = credit
         vm.debt = debt
         vm.total = credit - debt
-      })
+      }).catch(e => vm.credit = vm.debt = vm.total = 0)
     }
     vm.getSummary()
   }
