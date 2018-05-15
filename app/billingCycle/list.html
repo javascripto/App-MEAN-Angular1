@@ -10,9 +10,9 @@
     </thead>
     <tbody>
       <tr ng-repeat="billingCycle in bcCtrl.billingCycles">
-        <td>{{ billingCycle.name }}</td>
-        <td>{{ billingCycle.month }}</td>
-        <td>{{ billingCycle.year }}</td>
+        <td>{{:: billingCycle.name }}</td> <!-- Binding Unidirecional para diminuir quantidade de watchers na aplicação e melhorar performance -->
+        <td>{{:: billingCycle.month }}</td>
+        <td>{{:: billingCycle.year }}</td>
         <td class="table-actions">
           <button class="btn btn-warning"
             ng-click="bcCtrl.showTabUpdate(billingCycle)">
@@ -26,4 +26,7 @@
       </tr>
     </tbody>
   </table>
+  <div class="box-footer clearfix">
+    <paginator url="/#!/billingCycle" pages="{{ bcCtrl.pages }}"></paginator>
+  </div>
 </div>

@@ -1,31 +1,38 @@
 (function() {
   angular.module('primeiraApp').controller('BillingCycleCtrl', [
     '$http',
+    '$location',
     'msgs',
     'tabs',
     BillingCycleController
   ])
 
-  function BillingCycleController($http, msgs, tabs) {
+  function BillingCycleController($http, $location, msgs, tabs) {
     const vm = this
     const url = 'http://localhost:3003/api/billingCycles'
     
     vm.refresh = function() {
-      $http.get(url).then(response => {
+      const resultsPerPage = 5
+      const page = parseInt($location.search().page) || 1
+      $http.get(`${url}/?skip=${(page -1) * resultsPerPage}&limit=${resultsPerPage}`).then(response => {
         vm.billingCycle = {credits: [{}], debts: [{}]}
         vm.billingCycles = response.data
         vm.calculateValues()
         if (vm.tabCreate) return $('[data-target="#tabList"]').click()
-        tabs.show(vm, {tabList: true, tabCreate: true})
+        
+        $http.get(`${url}/count`).then(response => {
+          vm.pages = Math.ceil(response.data.value / resultsPerPage)
+          tabs.show(vm, {tabList: true, tabCreate: true})
+        })
       })
     }
 
     vm.create = function() {
-      $http.post(url, vm.billingCycle).then(resposta => {
+      $http.post(url, vm.billingCycle).then(response => {
         vm.refresh()
         msgs.addSuccess('Operação realizada com sucesso!!')
-      }).catch(resposta => {
-        msgs.addError(resposta.data.errors)
+      }).catch(response => {
+        msgs.addError(response.data.errors)
       })
     }
 
